@@ -1,5 +1,5 @@
 # weather_whisperer
-To run this project configure your Beaglebone Green Wireless board as described by the diagram below
+To run this project configure your Beaglebone Green Wireless board as described in Board Setup
 
 Install the below dependencies
 
@@ -23,3 +23,7 @@ sudo apt-get install build-essential python-dev python-setuptools
 sudo apt-get install libatlas-dev libatlas3gf-base
 
 sudo apt-get install python-sklearn
+
+## Board Setup
+Inline-style: 
+![alt text](https://github.com/CUBoulder-2017-IML4HCI/weather_whisperer/blob/master/IMG_2607.JPG "Board")
