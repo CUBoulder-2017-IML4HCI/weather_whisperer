@@ -1,6 +1,8 @@
 # weather_whisperer
 To run this project configure your Beaglebone Green Wireless board as described in Board Setup
 
+Make sure the board is connected to wifi as describe [here](http://wiki.seeed.cc/SeeedStudio_BeagleBone_Green_Wireless/)
+
 Install the below dependencies
 
 Make sure you are the root user on the board by executing the command sudo su
