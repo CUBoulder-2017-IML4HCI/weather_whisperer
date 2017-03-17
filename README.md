@@ -26,8 +26,12 @@ sudo apt-get install python-sklearn
 
 ## Board Setup
 See [this website](http://wiki.seeed.cc/SeeedStudio_BeagleBone_Green_Wireless/) for board diagram 
+
 Red LED -> GPIO_50, P9_14
+
 Blue LED -> GPIO_51, P9_16
+
 Ground -> DGND, P8_2
+
 Remember to include resistors with your LEDs to avoid burning out your LEDS
 ![alt text](https://github.com/CUBoulder-2017-IML4HCI/weather_whisperer/blob/master/IMG_2607.JPG "Board")
