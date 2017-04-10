@@ -80,9 +80,6 @@ def learn(features,target):
 # Set a color by giving R, G, and B values of 0-255.
 def setColor(r,g,b):
     # Convert 0-255 range to 0-100.
-    r = abs(r)%255
-    g = abs(g)%255
-    b = abs(b)%255
     red = (r/255.0) * 100
     blue = (b/255.0)*100
     green = (g/255.0)*100
@@ -92,7 +89,6 @@ def setColor(r,g,b):
     RED.ChangeDutyCycle(red)
     GREEN.ChangeDutyCycle(green)
     BLUE.ChangeDutyCycle(blue)
-    time.sleep(5)
 
 def give_me_data(request,id_):
 	v = request.json()
@@ -116,7 +112,7 @@ def generate_data(city,state):
 	features = []
 	#for i in range(1,13):
 	j = 1
-	for i in range(1,2):
+	for i in range(1,4):
 		if i < 10:
 			history1 = 'history_20160'+str(i)+'01'
 			history2 = 'history_20160'+str(i)+'15'
@@ -150,6 +146,13 @@ def generate_data(city,state):
 			break		
 	return features,target
 
+def hard_limits(color):
+	if color > 255:
+		return 255
+	elif color < 0:
+		return 0
+	else:
+		return color
 
 def predict(reg_model,city,state):
 	r = requests.get('http://api.wunderground.com/api/8f5846f4c43e4050/conditions/q/'+state+'/'+city+'.json')
@@ -160,9 +163,12 @@ def predict(reg_model,city,state):
 	#humid = float(values["current_observation"]["relative_humidity"].strip('%'))
 	#closest = reg_model.predict(np.matrix([[temp,wind,pressure,humid]]))
 	closest = reg_model.predict(np.matrix([[temp]]))
-	red = abs(int(np.round(closest[0][0])))%255
-	green = abs(int(np.round(closest[0][1])))%255
-	blue = abs(int(np.round(closest[0][2])))%255
+	red = int(np.round(closest[0][0]))
+	green = int(np.round(closest[0][1]))
+	blue = int(np.round(closest[0][2]))
+	red = hard_limits(red)
+	green = hard_limits(green)
+	blue = hard_limits(blue)
 	print(red,green,blue)
 	setColor(red,green,blue)
 
@@ -174,10 +180,19 @@ if __name__ == "__main__":
 	'''
 	city = db.child("info/city/city").get().val()
 	state = db.child("info/state/state").get().val()
+	if city=="Washington D.C." or city == "Washington, D.C." or city=="Washington DC" or city == "Washington, DC":
+		city = "Washington"
+		state = "DC"
+	city = city.replace(" ","_")
 	features,target = generate_data(city,state)
 	reg_model = learn(features,target)
-	predict(reg_model,city,state) 
-	
-	
+	on = True
+	i = 0
+	while on:	
+		predict(reg_model,city,state) 
+		time.sleep(10)
+		if i > 6:
+			on = False
+		i+=1		
 	GPIO.cleanup()
 	
