@@ -96,7 +96,7 @@ def setColor(r,g,b):
 
 def give_me_data(request,id_):
 	v = request.json()
-	temp = float(v['history']['observations'][0]['tempi'])
+	temp = v['history']['observations'][0]['tempi']
 	humid = float(v['history']['observations'][0]['hum'])
 	pressure = float(v['history']['observations'][0]['pressurei'])
 	wind = float(v['history']['observations'][0]['wspdi'])
@@ -104,7 +104,7 @@ def give_me_data(request,id_):
 	print("wind: " + str(wind))
 	print("pressure: " + str(pressure))
 	print("humidity: " + str(humid))
-	db.child("trainig").child("ID"+str(id_)).update{"temp":temp,"red":-1,"green":-1,"blue:"-1}
+	db.child("training").child("ID"+str(id_)).update({"temp":temp,"red":-1,"green":-1,"blue":-1})
 	'''
 	red = int(input("Give me red value\n"))
 	green = int(input("Give me green value\n"))
@@ -133,19 +133,21 @@ def generate_data(city,state):
 		j=j+1
 		give_me_data(r2,j)
 		j=j+1
-		db..update{"count":j-1}
+		print("value: ",j)
+		db.update({"count":j-1})
 	
-	sleep(5)
+	time.sleep(5)
 	while True:
 		if db.child("training/ID"+str(j-1)+"/green").get().val()!=-1:
+			print("getting training data")
 			for i in range(1,j):
-				temp = float(db.child("training/ID"+str(i)"/temp").get().val())
-				r = int(db.child("training/ID"+str(i)"/red").get().val())
-				g = int(db.child("training/ID"+str(i)"/green").get().val())
-				b = int(db.child("training/ID"+str(i)"/blue").get().val())
+				temp = float(db.child("training/ID"+str(i)+"/temp").get().val())
+				r = int(db.child("training/ID"+str(i)+"/red").get().val())
+				g = int(db.child("training/ID"+str(i)+"/green").get().val())
+				b = int(db.child("training/ID"+str(i)+"/blue").get().val())
 				features.append([temp])
 				target.append([r,g,b])
-				
+			break		
 	return features,target
 
 
@@ -153,10 +155,11 @@ def predict(reg_model,city,state):
 	r = requests.get('http://api.wunderground.com/api/8f5846f4c43e4050/conditions/q/'+state+'/'+city+'.json')
 	values = r.json()
 	temp = float(values["current_observation"]["temp_f"])
-	wind = float(values["current_observation"]["wind_mph"])
-	pressure = float(values["current_observation"]["pressure_in"])
-	humid = float(values["current_observation"]["relative_humidity"].strip('%'))
-	closest = reg_model.predict(np.matrix([[temp,wind,pressure,humid]]))
+	#wind = float(values["current_observation"]["wind_mph"])
+	#pressure = float(values["current_observation"]["pressure_in"])
+	#humid = float(values["current_observation"]["relative_humidity"].strip('%'))
+	#closest = reg_model.predict(np.matrix([[temp,wind,pressure,humid]]))
+	closest = reg_model.predict(np.matrix([[temp]]))
 	red = abs(int(np.round(closest[0][0])))%255
 	green = abs(int(np.round(closest[0][1])))%255
 	blue = abs(int(np.round(closest[0][2])))%255
@@ -169,8 +172,8 @@ if __name__ == "__main__":
 	city = input("Give me a city\n")
 	state = input("Give me the state\n")
 	'''
-	city = db.child("info/city").get().val()
-	state = db.child("info/state").get().val()
+	city = db.child("info/city/city").get().val()
+	state = db.child("info/state/state").get().val()
 	features,target = generate_data(city,state)
 	reg_model = learn(features,target)
 	predict(reg_model,city,state) 
