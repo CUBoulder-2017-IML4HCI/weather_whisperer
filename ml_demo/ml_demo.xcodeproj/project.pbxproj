@@ -126,6 +126,7 @@
 				TargetAttributes = {
 					9342A3DC1E9449D1009AF4E7 = {
 						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = FA2R2F44BF;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -338,7 +339,9 @@
 			baseConfigurationReference = 7749BE4F116A75C6E89A0EA0 /* Pods-ml_demo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = FA2R2F44BF;
 				INFOPLIST_FILE = ml_demo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "ww.ml-demo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -351,7 +354,9 @@
 			baseConfigurationReference = BD8033E784E64AC035D4FC76 /* Pods-ml_demo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = FA2R2F44BF;
 				INFOPLIST_FILE = ml_demo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "ww.ml-demo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
