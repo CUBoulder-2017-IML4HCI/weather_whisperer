@@ -23,7 +23,8 @@ class ViewController: UIViewController, UITextFieldDelegate {
     var gLab = CGFloat()
     var bLab = CGFloat()
     var temperature = ""
-    var humidity = ""
+    var wind = ""
+    var weather = ""
     var city = ""
     var state = ""
     var count = 1
@@ -34,6 +35,8 @@ class ViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var stateText: UITextField!
     @IBOutlet weak var locationLabel: UILabel!
     @IBOutlet weak var tempLabel: UILabel!
+    @IBOutlet weak var windLabel: UILabel!
+    @IBOutlet weak var weatherLabel: UILabel!
     
     
     ///THIS FUNCTION IS CONTROLLING THE LED CURRENTLY
@@ -129,7 +132,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
             city = cityText.text!
         }
         if stateText.text?.isEmpty ?? true {
-            state = "Colorado"
+            state = "CO"
             
         }else{
             state = stateText.text!
@@ -175,9 +178,13 @@ class ViewController: UIViewController, UITextFieldDelegate {
         ref.child("training").child("ID"+counter).observeSingleEvent(of: .value, with: { (snapshot) in
             let value = snapshot.value as? NSDictionary
             let tempy = value?["temp"] as? String ?? ""
+            let windy = value?["wind"] as? String ?? ""
+            let weathery = value?["weather"] as? String ?? ""
             //self.temperature = tempy
             print("should be label: ", tempy)
             self.tempLabel.text = tempy //temperature
+            self.windLabel.text = windy //temperature
+            self.weatherLabel.text = weathery //temperature
             print("ID"+counter)
             //tempy = temp
             
@@ -193,11 +200,17 @@ class ViewController: UIViewController, UITextFieldDelegate {
         ref.child("training").child("ID"+counter).observeSingleEvent(of: .value, with: { (snapshot) in
             let value = snapshot.value as? NSDictionary
             let temp = value?["temp"] as? String ?? ""
+            let windy = value?["wind"] as? String ?? ""
+            let weathery = value?["weather"] as? String ?? ""
             self.temperature = temp
+            self.wind = windy
+            self.weather = weathery
             
         })
         
         tempLabel.text = temperature
+        self.windLabel.text = wind //temperature
+        self.weatherLabel.text = weather //temperature
         /*
         ref.observe(.childAdded, with: { snapshot in
             
