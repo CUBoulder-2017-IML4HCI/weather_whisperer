@@ -130,11 +130,11 @@ def setColor_Pig(r,g,b):
 	print("Green: ",g)
 	print("Blue: ",b)
 
-def give_me_data(request,id_):
+def give_me_data(request,id_,weather_conditions):
 	v = request.json()
 	temp = v['history']['observations'][0]['tempi']
 	wind = v['history']['observations'][0]['wspdi']
-	weather = v['history']['observations'][0]['conds']
+	weather = weather_conditions[v['history']['observations'][0]['conds']]
 	print("temp_f: " + str(temp))
 	print("wind_mph: " + str(wind))
 	print("weather: " + str(weather))
@@ -142,7 +142,7 @@ def give_me_data(request,id_):
 	db.child("training").child("ID"+str(id_)).update({"temp":temp,"wind": wind,\
 		"weather": weather,"red":-1,"green":-1,"blue":-1})
 
-def generate_data(city,state,weather_conditions):
+def generate_data(city,state,weather_conditions,conditions):
 	target = []
 	features = []
 	temps = []
@@ -163,9 +163,9 @@ def generate_data(city,state,weather_conditions):
 			r1 = requests.get('http://api.wunderground.com/api/8f5846f4c43e4050/'+history1+'/q/'+state+'/'+city+'.json')
 			r2 = requests.get('http://api.wunderground.com/api/8f5846f4c43e4050/'+history2+'/q/'+state+'/'+city+'.json')
 		
-		give_me_data(r1,j)
+		give_me_data(r1,j,weather_conditions)
 		j=j+1
-		give_me_data(r2,j)
+		give_me_data(r2,j,weather_conditions)
 		j=j+1
 		print("value: ",j)
 		db.update({"count":j-1})
@@ -177,7 +177,7 @@ def generate_data(city,state,weather_conditions):
 			for i in range(1,j):
 				temp = float(db.child("training/ID"+str(i)+"/temp").get().val())
 				wind = float(db.child("training/ID"+str(i)+"/wind").get().val())
-				weather = weather_conditions[(db.child("training/ID"+str(i)+"/weather").get().val())]
+				weather = conditions[(db.child("training/ID"+str(i)+"/weather").get().val())]
 				r = int(db.child("training/ID"+str(i)+"/red").get().val())
 				g = int(db.child("training/ID"+str(i)+"/green").get().val())
 				b = int(db.child("training/ID"+str(i)+"/blue").get().val())
@@ -213,13 +213,13 @@ def test_sample(temp,wind,weather,temps,winds,weathers):
 	confident = confident_t and confident_w and confident_conds
 	return confident
 
-def predict(reg_model,city,state,weather_conditions,temps,winds,weathers):
+def predict(reg_model,city,state,conditions,temps,winds,weathers):
 	
 	r = requests.get('http://api.wunderground.com/api/8f5846f4c43e4050/conditions/q/'+state+'/'+city+'.json')
 	values = r.json()
 	temp = float(values["current_observation"]["temp_f"])
 	wind = float(values["current_observation"]["wind_mph"])
-	weather = weather_conditions[values["current_observation"]["weather"]]
+	weather = conditions[values["current_observation"]["weather"]]
 	print([temp,wind,weather])
 	confident = test_sample(temp,wind,weather,temps,winds,weathers)
 	print("Confidence: ", confident)
@@ -242,17 +242,74 @@ def predict(reg_model,city,state,weather_conditions,temps,winds,weathers):
 
 
 #load weather descriptions
-def load_conditions(filename):
-	weather = defaultdict(float)
-	conds = open(filename,'r')
-	f = 0.2
-	for c in conds:
-		weather[c.strip('\n')]=f
-		f+=0.2
+def load_conditions():
+	weather = defaultdict(str)
+	conditions = defaultdict(float)
 
-	print(f)
-	print(len(weather.keys()))
-	return weather
+	weather["Drizzle"]="Rain"
+	weather["Rain"]="Rain"
+	weather["Snow"]="Snow"
+	weather["Snow Grains"]="Snow"
+	weather["Ice Crystals"]="Snow"
+	weather["Ice Pellets"]="Snow"
+	weather["Hail"]="Snow"
+	weather["Mist"]="Fog"
+	weather["Fog"]="Fog"
+	weather["Fog Patches"]="Fog"
+	weather["Smoke"]="Cloudy"
+	weather["Volcanic Ash"]="Cloudy"
+	weather["Widespread Dust"]="Cloudy"
+	weather["Sand"]="Cloudy"
+	weather["Haze"]="Cloudy"
+	weather["Spray"]="Rain"
+	weather["Dust Whirls"]="Cloudy"
+	weather["Sandstorm"]="Cloudy"
+	weather["Low Drifting Snow"]="Snow"
+	weather["Low Drifting Widespread Dust"]="Cloudy"
+	weather["Low Drifting Sand"]="Cloudy"
+	weather["Blowing Snow"]="Snow"
+	weather["Blowing Widespread Dust"]="Cloudy"
+	weather["Blowing Sand"]="Cloudy"
+	weather["Rain Mist"]="Rain"
+	weather["Rain Showers"]="Rain"
+	weather["Snow Showers"]="Rain"
+	weather["Snow Blowing Snow Mist"]="Snow"
+	weather["Ice Pellet Showers"]="Snow"
+	weather["Hail Showers"]="Rain"
+	weather["Small Hail Showers"]="Rain"
+	weather["Thunderstorm"]="Thunderstorm"
+	weather["Thunderstorms and Rain"]="Thunderstorm"
+	weather["Thunderstorms and Snow"]="Thunderstorm"
+	weather["Thunderstorms and Ice Pellets"]="Thunderstorm"
+	weather["Thunderstorms with Hail"]="Thunderstorm"
+	weather["Thunderstorms with Small Hail"]="Thunderstorm"
+	weather["Freezing Drizzle"]="Rain"
+	weather["Freezing Rain"]="Rain"
+	weather["Freezing Fog"]="Fog"
+	weather["Patches of Fog"]="Fog"
+	weather["Shallow Fog"]="Fog"
+	weather["Partial Fog"]="Fog"
+	weather["Overcast"]="Cloudy"
+	weather["Clear"]="Sunny"
+	weather["Partly Cloudy"]="Partly Cloudy"
+	weather["Mostly Cloudy"]="Partly Cloudy"
+	weather["Scattered Clouds"]="Partly Cloudy"
+	weather["Small Hail"]="Rain"
+	weather["Squalls"]="Rain"
+	weather["Funnel Cloud"]="Cloudy"
+	weather["Unknown Precipitation"]="Unknown"
+	weather["Unknown"]="Unknown"
+
+	conditions["Snow"]=10.0
+	conditions["Rain"]=20.0
+	conditions["Thunderstorm"]=25.0
+	conditions["Fog"]=35.0
+	conditions["Cloudy"]=40.0
+	conditions["Partly Cloudy"]=45.0
+	conditions["Clear"]=60.0
+	conditions["Unknown"]=0.0
+
+	return weather,conditions
 
 
 
@@ -261,7 +318,7 @@ if __name__ == "__main__":
 	city = input("Give me a city\n")
 	state = input("Give me the state\n")
 	'''
-	weather_conditions = load_conditions("weather_conditions.txt")
+	weather_conditions,conditions = load_conditions()
 	#print(weather_conditions)
 	#sys.exit()
 	
@@ -272,15 +329,16 @@ if __name__ == "__main__":
 		city = "Washington"
 		state = "DC"
 	city = city.replace(" ","_")
-	features,target,temps,winds,weathers = generate_data(city,state,weather_conditions)
+	features,target,temps,winds,weathers = generate_data(city,state,weather_conditions,\
+		conditions)
 	
 	reg_model = learn(features,target)
-	predict(reg_model,city,state,weather_conditions,temps,winds,weathers) 
+	predict(reg_model,city,state,conditions,temps,winds,weathers) 
 	sys.exit()
 	on = True
 	i = 0
 	while on:	
-		predict(reg_model,city,state,weather_conditions,temps,winds,weathers) 
+		predict(reg_model,city,state,conditions,temps,winds,weathers) 
 		time.sleep(10)
 		if i > 6:
 			on = False
