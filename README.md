@@ -1,39 +1,23 @@
 # weather_whisperer
-To run this project configure your Beaglebone Green Wireless board as described in Board Setup
+This project uses machine learning to determine the color of an RGB LED strip controlled by an iPhone App and a Raspberry Pi.
+We put the RGB LED strip inside a laser cut lamp (see below for pictures)
+The user determines what color the lamp should be based on different temperatures, wind speends, and weather conditions (i.e. Partly Cloudy) by selecting different colors in the iPhone App. After the user has entered a small set of data points (currently 5) the lamp is ready to be turned on. The confidence of the color of the lamp is displayed to user as "Confident" or "Not Confident" depending on how similar the current weather is to weather in the training data. The user has the ability to add training points and retrain the algorithm. 
 
-Make sure the board is connected to wifi as describe [here](http://wiki.seeed.cc/SeeedStudio_BeagleBone_Green_Wireless/)
+# Install Instructions 
 
-Install the below dependencies
+## Raspbery Pi
+This code is written for Python 3. 
 
-Make sure you are the root user on the board by executing the command sudo su
-
-Run: python led.py
-
-Give me the name of a City
-
-Enter the name of a city whose name does **NOT** contain any spaces (i.e. Portland, **but NOT** Los Angeles)
-
-Give me the name of the State
-
-Enter the two letter state abbreviation of the city you entered above (i.e. OR)
-
-## Install Python Dependencies
-sudo apt-get install python-numpy python-scipy python-matplotlib ipython ipython-notebook python-pandas python-sympy python-nose
-
-sudo apt-get install build-essential python-dev python-setuptools
-
+### Install the below dependencies
+sudo apt-get install -y python3-pip
+sudo apt-get install python3-numpy python3-scipy python3-matplotlib ipython ipython3-notebook python3-pandas python3-sympy python3-nose
+sudo apt-get install build-essential python3-dev python3-setuptools
 sudo apt-get install libatlas-dev libatlas3gf-base
+sudo pip3 install -U scikit-learn
 
-sudo apt-get install python-sklearn
+## iPhone
+
+
+
 
 ## Board Setup
-See [this website](http://wiki.seeed.cc/SeeedStudio_BeagleBone_Green_Wireless/) for board diagram 
-
-Red LED -> GPIO_50, P9_14
-
-Blue LED -> GPIO_51, P9_16
-
-Ground -> DGND, P8_2
-
-Remember to include resistors with your LEDs to avoid burning out your LEDS
-![alt text](https://github.com/CUBoulder-2017-IML4HCI/weather_whisperer/blob/master/IMG_2607.JPG "Board")
