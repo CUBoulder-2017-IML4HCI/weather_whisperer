@@ -11,11 +11,12 @@ This code is written for Python 3.
 ### Install the below dependencies
 ~~~~ 
 sudo apt-get install -y python3-pip 
-~~~~
 sudo apt-get install python3-numpy python3-scipy python3-matplotlib ipython ipython3-notebook python3-pandas python3-sympy python3-nose
 sudo apt-get install build-essential python3-dev python3-setuptools
 sudo apt-get install libatlas-dev libatlas3gf-base
 sudo pip3 install -U scikit-learn
+~~~~
+
 
 ## iPhone
 
