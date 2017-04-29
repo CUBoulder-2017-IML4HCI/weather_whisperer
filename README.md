@@ -16,6 +16,18 @@ sudo apt-get install build-essential python3-dev python3-setuptools
 sudo apt-get install libatlas-dev libatlas3gf-base
 sudo pip3 install -U scikit-learn
 ~~~~
+Pyrebase interfaces with Firebase's REST API
+~~~~
+sudo pip3 install Pyrebase
+~~~~
+The pigpio library which allows control of the GPIO on the Raspberry Pi
+~~~~
+wget abyz.co.uk/rpi/pigpio/pigpio.zip
+unzip pigpio.zip
+cd PIGPIO
+make
+sudo make install
+~~~~
 
 
 ## iPhone
