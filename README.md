@@ -9,6 +9,7 @@ The user determines what color the lamp should be based on different temperature
 This code is written for Python 3. 
 
 ### Install the below dependencies
+Install tool for python and various mathematical and machine learning libraries
 ~~~~ 
 sudo apt-get install -y python3-pip 
 sudo apt-get install python3-numpy python3-scipy python3-matplotlib
