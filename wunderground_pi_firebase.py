@@ -122,7 +122,7 @@ def setColor(r,g,b):
     GREEN.ChangeDutyCycle(green)
     BLUE.ChangeDutyCycle(blue)
 
-# Set a color by giving RGB values of 0-255. with GPIO
+# Set a color by giving RGB values of 0-255. with pigpio
 def setColor_Pig(r,g,b):
 	pi.set_PWM_dutycycle(red, r)
 	pi.set_PWM_dutycycle(green, g)
@@ -163,7 +163,7 @@ def predict(reg_model,city,state,weather_string,weather_float,features):
 	
 	r = requests.get('http://api.wunderground.com/api/8f5846f4c43e4050/conditions/q/'+state+'/'+city+'.json')
 	values = r.json()
-	temp = float(values["current_observation"]["temp_f"])
+	temp = round(float(values["current_observation"]["temp_f"]))
 	wind = float(values["current_observation"]["wind_mph"])
 	weather = weather_string[values["current_observation"]["weather"]]
 	print([temp,wind,weather])
@@ -174,9 +174,9 @@ def predict(reg_model,city,state,weather_string,weather_float,features):
 	print("Confidence: ", confident)
 
 	if confident:
-		db.update({"learn":"Confident"})
+		db.update({"current_conditions/learn":"Confident"})
 	else:
-		db.update({"learn":"Not Confident"})
+		db.update({"current_conditions/learn":"Not Confident"})
 
 	closest = reg_model.predict(np.matrix([[temp,wind,weather_float[weather]]]))
 	red = int(np.round(closest[0][0]))
@@ -186,49 +186,59 @@ def predict(reg_model,city,state,weather_string,weather_float,features):
 	green = hard_limits(green)
 	blue = hard_limits(blue)
 	print(red,green,blue)
-	return str(temp),str(wind), weather
+	return temp,wind,weather
 	#setColor(red,green,blue)
 	
 #Add training point to database
 def add_training_point(temp,wind,weather,r,g,b,total_training_points):
 	id_ = total_training_points
-	db.child("training").child("ID"+str(id_)).update({"temp":temp,"wind": wind,\
+	db.child("training").child("ID"+str(id_)).update({"temp":str(temp),"wind": str(wind),\
 		"weather": weather,"red":r,"green":g,"blue":b})
 
 #Extract historical information for a historical request
 #Used for training app
-def give_me_data(request):
+def give_me_data(request,weather_string):
 	v = request.json()
-	temp = v['history']['observations'][0]['tempi']
+	print(v)
+	temp = round(float(v['history']['observations'][0]['tempi']))
 	wind = v['history']['observations'][0]['wspdi']
-	weather = v['history']['observations'][0]['conds']
+	weather = weather_string[v['history']['observations'][0]['conds']]
 	print("temp_f: " + str(temp))
 	print("wind_mph: " + str(wind))
 	print("weather: " + str(weather))
 	return temp,wind,weather
 	
 #Update the conditions if in the pre-training phase
-def update_conditions(city,state,total_training_points):
+def update_conditions(city,state,total_training_points,weather_string):
 	id_ = total_training_points
 	temp = ""
 	wind = ""
 	weather = ""
+	print(city)
+	print(state)
 	if(id_==0):
 		history = 'history_20160115'
 		r = requests.get('http://api.wunderground.com/api/8f5846f4c43e4050/'+history+'/q/'+state+'/'+city+'.json')
-		temp,wind,weather = give_me_data(r)
+		
+		temp,wind,weather = give_me_data(r,weather_string)
+
 	elif(id_==1):
 		history = 'history_20160415'
 		r = requests.get('http://api.wunderground.com/api/8f5846f4c43e4050/'+history+'/q/'+state+'/'+city+'.json')
-		temp,wind,weather = give_me_data(r)
+		print(r)
+		temp,wind,weather = give_me_data(r,weather_string)
 	elif(id_==2):
 		history = 'history_20160715'
 		r = requests.get('http://api.wunderground.com/api/8f5846f4c43e4050/'+history+'/q/'+state+'/'+city+'.json')
-		temp,wind,weather = give_me_data(r)
+		print(r)
+		temp,wind,weather = give_me_data(r,weather_string)
+		
 	else:
 		history = 'history_20161015'
 		r = requests.get('http://api.wunderground.com/api/8f5846f4c43e4050/'+history+'/q/'+state+'/'+city+'.json')
-		temp,wind,weather = give_me_data(r)
+		print(r)
+		temp,wind,weather = give_me_data(r,weather_string)
+		
 
 	return temp,wind,weather
 
@@ -236,7 +246,7 @@ def update_conditions(city,state,total_training_points):
 def current_conditions(city, state, weather_string):
 	r = requests.get('http://api.wunderground.com/api/8f5846f4c43e4050/conditions/q/'+state+'/'+city+'.json')
 	values = r.json()
-	temp = float(values["current_observation"]["temp_f"])
+	temp = round(float(values["current_observation"]["temp_f"]))
 	wind = float(values["current_observation"]["wind_mph"])
 	weather = weather_string[values["current_observation"]["weather"]]
 	return temp,wind,weather
@@ -246,7 +256,7 @@ def get_data(total_training_points,weather_float):
 	features = []
 	target = []
 	for i in range(0,total_training_points):
-		temp = float(db.child("training/ID"+str(i)+"/temp").get().val())
+		temp = int(db.child("training/ID"+str(i)+"/temp").get().val())
 		wind = float(db.child("training/ID"+str(i)+"/wind").get().val())
 		weather = db.child("training/ID"+str(i)+"/weather").get().val()
 		red = float(db.child("training/ID"+str(i)+"/red").get().val())
@@ -308,7 +318,7 @@ def load_conditions():
 	weather["Shallow Fog"]="Fog"
 	weather["Partial Fog"]="Fog"
 	weather["Overcast"]="Cloudy"
-	weather["Clear"]="Sunny"
+	weather["Clear"]="Clear"
 	weather["Partly Cloudy"]="Partly Cloudy"
 	weather["Mostly Cloudy"]="Partly Cloudy"
 	weather["Scattered Clouds"]="Partly Cloudy"
@@ -344,41 +354,52 @@ if __name__ == "__main__":
 	city = ""
 	state = ""
 	weather_string,weather_float = load_conditions()
-	total_training_points=len(db.child("training").get().val())
-	print(total_training_points)
+	
+	#print(total_training_points)
 	
 	total = 0
 	while True:
-		status = db.child("pi_command").get().val()
-		if(status=="on"):
+		status = db.child("info/pi_command").get().val()
+		on_off = db.child("info/led_state").get().val()
+		city,state = get_local()
+		total_training_points=len(db.child("training").get().val())
+		if(on_off=="ON"):
 			print("current status: ",status)
 			city,state = get_local()
 			features,target = get_data(total_training_points,weather_float)
 			reg_model = learn(features,target)
 			temp,wind,weather = predict(reg_model,city,state,weather_string,\
 				weather_float,features) 
-			db.child("current_conditions").update({"temp":temp,"wind": wind,\
+			db.child("current_conditions").update({"temp":str(temp),"wind": str(wind),\
+				"weather": weather,"status":"not updated"})
+			db.update({"info/led_state":"limbo"})
+			db.child("current_conditions").update({"temp":str(temp),"wind": str(wind),\
 				"weather": weather,"status":"updated"})
-			db.update({"pi_command":"limbo"})
+			print("done learning")	
 
 		#Keep track of current status
-		if(status=="limbo"):
+		if(on_off=="limbo"):
 			time.sleep(10)
 			total+=10
-			if total>360:
-				db.update({"pi_command":"on"})
+			if total>60:
+				db.update({"info/led_state":"ON"})
 				total = 0
 
 		if(status=="location update"):
 			print("current status: ",status)
-			db.update({"learn":"training"})
+			db.update({"current_conditions/learn":"Add Color"})
 			total_training_points=0
-			db.update({"count":total_training_points})
+			db.update({"info/count":str(total_training_points)})
 			city,state = get_local()
 			temp,wind,weather = current_conditions(city, state, weather_string)
-			db.child("current_conditions").update({"temp":temp,"wind": wind,\
+			db.child("current_conditions").update({"temp":str(temp),"wind": str(wind),\
+				"weather": weather,"status":"not updated"})
+			db.update({"info/pi_command":"off"})
+			db.update({"training":""})
+			db.child("current_conditions").update({"temp":str(temp),"wind": str(wind),\
 				"weather": weather,"status":"updated"})
-			db.update({"pi_command":"off"})
+			print("done updating location")
+
 		'''
 		if(status=="off"):
 			print("current status: ",status)
@@ -386,7 +407,7 @@ if __name__ == "__main__":
 
 		if(status=="training point"):
 			print("current status: ",status)
-			temp = float(db.child("current_conditions/temp").get().val())
+			temp = int(db.child("current_conditions/temp").get().val())
 			wind = float(db.child("current_conditions/wind").get().val())
 			weather = db.child("current_conditions/weather").get().val()
 			r = int(db.child("color/red").get().val())
@@ -396,12 +417,26 @@ if __name__ == "__main__":
 			if total_training_points >= 5:
 				temp,wind,weather = current_conditions(city,state,weather_string)
 			else: 
-				temp,wind,weather = update_conditions(city,state,total_training_points)
+				temp,wind,weather = update_conditions(city,state,total_training_points,\
+					weather_string)
+
+			if total_training_points >= 5:
+				db.update({"info/led_state":"ON"}) #retrain
+			
+			db.child("current_conditions").update({"temp":str(temp),"wind": str(wind),\
+			"weather": weather,"status":"not updated"})
+			
+			db.update({"info/pi_command":"off"})
 			total_training_points+=1
-			db.child("current_conditions").update({"temp":temp,"wind": wind,\
-				"weather": weather,"status":"updated"})
-			db.update({"pi_command":"off"})
-		if(status=="done"):
+			if total_training_points == 5:
+				db.update({"current_conditions/learn":"Ready to Train"})
+			db.update({"info/count":str(total_training_points)})
+			db.child("current_conditions").update({"temp":str(temp),"wind": str(wind),\
+			"weather": weather,"status":"updated"})
+			print("done updating training point")
+			
+
+		if(on_off=="OFF" and status=="done"):
 			print("current status: ",status)
 			break
 			#pi.stop()
