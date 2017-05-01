@@ -9,6 +9,7 @@
 
 import csv
 import sys
+import socket
 
 import numpy as np
 from scipy import stats
@@ -28,7 +29,7 @@ import json
 import argparse
 import time
 #import RPi.GPIO as GPIO
-#import pigpio
+import pigpio
 import pyrebase
 
 import requests
@@ -72,7 +73,7 @@ GREEN.start(0)
 BLUE.start(0)
 '''
 
-#pi = pigpio()
+pi = pigpio()
 
 '''
 Try five different models. Two kinds of linear regression plus polynomial regression with 
@@ -140,6 +141,18 @@ def hard_limits(color):
 	else:
 		return color
 
+#Grab the current weather conditions from the weather underground API
+def current_conditions(city, state, weather_string):
+	r = requests.get('http://api.wunderground.com/api/8f5846f4c43e4050/conditions/q/'+state+'/'+city+'.json')
+	values = r.json()
+	if city=="Boulder" and state=="CO":
+		temp = round(float(values["current_observation"]["temp_f"]))
+	else:
+		temp = get_local_temp()
+	wind = float(values["current_observation"]["wind_mph"])
+	weather = weather_string[values["current_observation"]["weather"]]
+	return temp,wind,weather
+
 #Determine whether or not we are confident in our prediction based on training data
 #Currently based on whether a temperature, wind, and weather are near a training point
 def test_sample(temp,wind,weather,temps,winds,weathers):
@@ -160,12 +173,8 @@ def test_sample(temp,wind,weather,temps,winds,weathers):
 
 #Predict the RGB values based on the current weather conditions
 def predict(reg_model,city,state,weather_string,weather_float,features):
-	
-	r = requests.get('http://api.wunderground.com/api/8f5846f4c43e4050/conditions/q/'+state+'/'+city+'.json')
-	values = r.json()
-	temp = round(float(values["current_observation"]["temp_f"]))
-	wind = float(values["current_observation"]["wind_mph"])
-	weather = weather_string[values["current_observation"]["weather"]]
+	temp,wind,weather = current_conditions(city, state, weather_string):
+	weather = weather_float[weather]
 	print([temp,wind,weather])
 	temps = [f[0] for f in features]
 	winds = [f[1] for f in features]
@@ -242,14 +251,15 @@ def update_conditions(city,state,total_training_points,weather_string):
 
 	return temp,wind,weather
 
-#Grab the current weather conditions from the weather underground API
-def current_conditions(city, state, weather_string):
-	r = requests.get('http://api.wunderground.com/api/8f5846f4c43e4050/conditions/q/'+state+'/'+city+'.json')
-	values = r.json()
-	temp = round(float(values["current_observation"]["temp_f"]))
-	wind = float(values["current_observation"]["wind_mph"])
-	weather = weather_string[values["current_observation"]["weather"]]
-	return temp,wind,weather
+def get_local_temp():
+	s = socket.socket()        
+	host = '192.168.20.100'# ip of raspberry pi 
+	port = 12345               
+	s.connect((host, port))
+	temp = s.recv(1024)
+	print(temp)
+	s.close()
+	return temp.decode('utf-16')
 
 #Extract features and target set for machine learning
 def get_data(total_training_points,weather_float):
@@ -354,8 +364,13 @@ if __name__ == "__main__":
 	city = ""
 	state = ""
 	weather_string,weather_float = load_conditions()
+	local = True
 	
 	#print(total_training_points)
+	for i in range(0,5):
+		temp = get_local_temp()
+		print("Temp from Pi: ",temp)
+	sys.exit(1)
 	
 	total = 0
 	while True:
@@ -439,7 +454,7 @@ if __name__ == "__main__":
 		if(on_off=="OFF" and status=="done"):
 			print("current status: ",status)
 			break
-			#pi.stop()
+			pi.stop()
 			#GPIO.cleanup()
 
 
