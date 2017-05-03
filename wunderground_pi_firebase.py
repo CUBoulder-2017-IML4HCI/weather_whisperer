@@ -150,7 +150,9 @@ def current_conditions(city, state, weather_string):
 	r = requests.get('http://api.wunderground.com/api/8f5846f4c43e4050/conditions/q/'+state+'/'+city+'.json')
 	values = r.json()
 	if city=="Boulder" and state=="CO":
+		print("contacting weather station")
 		temp = int(get_local_temp())
+		print("done contacting weather station")
 	else:
 		temp = round(float(values["current_observation"]["temp_f"]))
 	wind = float(values["current_observation"]["wind_mph"])
@@ -195,12 +197,15 @@ def predict(reg_model,city,state,weather_string,weather_float,features):
 	red = int(np.round(closest[0][0]))
 	green = int(np.round(closest[0][1]))
 	blue = int(np.round(closest[0][2]))
+	print("red: ",red)
+	print("green: ",green)
+	print("blue: ",blue)
 	red = hard_limits(red)
 	green = hard_limits(green)
 	blue = hard_limits(blue)
-	red = 255
-	blue = 255
-	green = 0
+	#red = 255
+	#blue = 255
+	#green = 0
 	print(red,green,blue)	
 	setColor_Pig(red,green,blue)
 	return temp,wind,weather
@@ -261,7 +266,7 @@ def update_conditions(city,state,total_training_points,weather_string):
 def get_local_temp():
 	s = socket.socket()        
 	host = '192.168.20.101'# ip of raspberry pi 
-	port = 5569              
+	port = 5568              
 	s.connect((host, port))
 	temp = s.recv(1024)
 	print(temp)
@@ -276,10 +281,12 @@ def get_data(total_training_points,weather_float):
 		temp = int(db.child("training/ID"+str(i)+"/temp").get().val())
 		wind = float(db.child("training/ID"+str(i)+"/wind").get().val())
 		weather = db.child("training/ID"+str(i)+"/weather").get().val()
-		red = float(db.child("training/ID"+str(i)+"/red").get().val())
-		green = float(db.child("training/ID"+str(i)+"/green").get().val())
-		blue = float(db.child("training/ID"+str(i)+"/blue").get().val())
-
+		red = abs(float(db.child("training/ID"+str(i)+"/red").get().val())-255)
+		green = abs(float(db.child("training/ID"+str(i)+"/green").get().val())-255)
+		blue = abs(float(db.child("training/ID"+str(i)+"/blue").get().val())-255)
+		print("red data: ",red)
+		print("green data: ",green)
+		print("blue data: ",blue)
 		features.append([temp,wind,weather_float[weather]])
 		target.append([red,green,blue])
 
