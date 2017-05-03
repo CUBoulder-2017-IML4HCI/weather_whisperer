@@ -7,6 +7,10 @@
 #
 # @author Jeff Geerling, 2015
 
+import sys
+import termios
+import tty
+
 import csv
 import sys
 import socket
@@ -52,9 +56,9 @@ firebase = pyrebase.initialize_app(config)
 db = firebase.database()
 
 # LED pin mapping.
-red = 17
-green = 22
-blue = 24
+red = 20
+green = 26
+blue = 21
 '''
 # GPIO setup.
 GPIO.setmode(GPIO.BCM)
@@ -73,7 +77,7 @@ GREEN.start(0)
 BLUE.start(0)
 '''
 
-pi = pigpio()
+pi = pigpio.pi()
 
 '''
 Try five different models. Two kinds of linear regression plus polynomial regression with 
@@ -125,7 +129,7 @@ def setColor(r,g,b):
 
 # Set a color by giving RGB values of 0-255. with pigpio
 def setColor_Pig(r,g,b):
-	pi.set_PWM_dutycycle(red, r)
+	#pi.set_PWM_dutycycle(red, r)
 	pi.set_PWM_dutycycle(green, g)
 	pi.set_PWM_dutycycle(blue, b)
 	print("Red: ",r)
@@ -146,9 +150,9 @@ def current_conditions(city, state, weather_string):
 	r = requests.get('http://api.wunderground.com/api/8f5846f4c43e4050/conditions/q/'+state+'/'+city+'.json')
 	values = r.json()
 	if city=="Boulder" and state=="CO":
-		temp = round(float(values["current_observation"]["temp_f"]))
+		temp = int(get_local_temp())
 	else:
-		temp = get_local_temp()
+		temp = round(float(values["current_observation"]["temp_f"]))
 	wind = float(values["current_observation"]["wind_mph"])
 	weather = weather_string[values["current_observation"]["weather"]]
 	return temp,wind,weather
@@ -173,7 +177,7 @@ def test_sample(temp,wind,weather,temps,winds,weathers):
 
 #Predict the RGB values based on the current weather conditions
 def predict(reg_model,city,state,weather_string,weather_float,features):
-	temp,wind,weather = current_conditions(city, state, weather_string):
+	temp,wind,weather = current_conditions(city, state, weather_string)
 	weather = weather_float[weather]
 	print([temp,wind,weather])
 	temps = [f[0] for f in features]
@@ -194,9 +198,12 @@ def predict(reg_model,city,state,weather_string,weather_float,features):
 	red = hard_limits(red)
 	green = hard_limits(green)
 	blue = hard_limits(blue)
-	print(red,green,blue)
+	red = 255
+	blue = 255
+	green = 0
+	print(red,green,blue)	
+	setColor_Pig(red,green,blue)
 	return temp,wind,weather
-	#setColor(red,green,blue)
 	
 #Add training point to database
 def add_training_point(temp,wind,weather,r,g,b,total_training_points):
@@ -253,8 +260,8 @@ def update_conditions(city,state,total_training_points,weather_string):
 
 def get_local_temp():
 	s = socket.socket()        
-	host = '192.168.20.100'# ip of raspberry pi 
-	port = 12345               
+	host = '192.168.20.101'# ip of raspberry pi 
+	port = 5569              
 	s.connect((host, port))
 	temp = s.recv(1024)
 	print(temp)
@@ -365,13 +372,7 @@ if __name__ == "__main__":
 	state = ""
 	weather_string,weather_float = load_conditions()
 	local = True
-	
-	#print(total_training_points)
-	for i in range(0,5):
-		temp = get_local_temp()
-		print("Temp from Pi: ",temp)
-	sys.exit(1)
-	
+		
 	total = 0
 	while True:
 		status = db.child("info/pi_command").get().val()

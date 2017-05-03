@@ -1,4 +1,3 @@
-import Adafruit_BBIO.GPIO as GPIO
 import time
 import json
 import requests
@@ -29,10 +28,6 @@ Y = [red,blue]
 clf = tree.DecisionTreeClassifier()
 clf = clf.fit(X,Y)
 
-blue = "P9_16"
-red = "P9_14"
-GPIO.setup(red, GPIO.OUT)
-GPIO.setup(blue, GPIO.OUT)
 while True:
 	city = raw_input("Give me a city\n")
 	state = raw_input("Give me the state\n")
@@ -47,11 +42,7 @@ while True:
 	closest = clf.predict([[temp,wind,pressure,humid]])
 	if closest[0]==0:
 		print "Like Fairbanks, AK"
-		GPIO.output(blue, GPIO.HIGH)
-		GPIO.output(red, GPIO.LOW)
 		time.sleep(2)
 	elif closest[0]==1:
 		print "Like San Francisco, CA"
-		GPIO.output(red, GPIO.HIGH)
-		GPIO.output(blue, GPIO.LOW)
 		time.sleep(2)
