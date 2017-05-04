@@ -67,6 +67,7 @@ In Firebase, change pi_command to 'off' and led_state to 'OFF'
  python3 wunderground_pi_firebase.py [API KEY]
  ~~~
  ## iPhone App
+ If you enter Boulder, CO the temperature will be taken from Pi Weather Station instead of Weather Underground
  1. Enter the name of a city in the United States making sure to capitalize the first letter of each word in the city name 
  2. Enter the two letter state abbreviation
  3. Press the save button
