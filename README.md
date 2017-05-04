@@ -56,7 +56,10 @@ def get_local_temp():
  
 In Firebase, change pi_command to 'off' and led_state to 'OFF'
  ## Pi Controlling Weather Station
- Run the following command ~~~ python3 simple_server.py ~~~
+ Run the following command 
+ ~~~ 
+ python3 simple_server.py 
+ ~~~
  ## Pi Controllng RGB LED Strip
  Run the following commands to access the GPIO pins and start the program
  ~~~
