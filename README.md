@@ -60,12 +60,31 @@ In Firebase, change pi_command to 'off' and led_state to 'OFF'
  ~~~ 
  python3 simple_server.py 
  ~~~
+ 
  ## Pi Controllng RGB LED Strip
  Run the following commands to access the GPIO pins and start the program
  ~~~
  sudo pigpiod
  python3 wunderground_pi_firebase.py [API KEY]
  ~~~
+ 
+ ## Hardware for RGB LED Strip
+ ~~~
+ Schematic
+ ~~~
+
+To understand these instructions you will have to understand the shcematic and pictures shown above. 
+Power Supply and Potentiometer:
+ 1. The ideal voltage for a RGB LED strip is 10 volts/9volts. If you have one of these skip to instruction .....
+ 2. With a voltage supply 11 volts and above continue reading.
+ 3. You will need a potentiometer that will need to be adjusted to 9.8 kΩ
+ 4. Connect the power and the ground to the potentiometer 
+ 5. Then connect the input wire that is for the pi. 
+
+P-Mosfets: 
+ 1. Make sure that these are P-Mosfets, if they are N-Mosfets the 
+ 2. 
+ 
  ## iPhone App
  If you enter Boulder, CO the temperature will be taken from Pi Weather Station instead of Weather Underground
  1. Enter the name of a city in the United States making sure to capitalize the first letter of each word in the city name 
