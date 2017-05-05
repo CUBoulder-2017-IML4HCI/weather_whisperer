@@ -5,6 +5,8 @@ The user determines what color the lamp should be based on different temperature
 
 # Install Instructions 
 First obtain a weather underground API key [here.](https://www.wunderground.com/weather/api/)
+Next create a database in [firebase](https://firebase.google.com/) copying the below format. 
+Make sure the names of the fields are the same.
 
 ## Raspbery Pi
 This code is written for Python 3 and assumes that the Pis are connected to internet via wifi
@@ -38,7 +40,7 @@ sudo make install
 # Instructions for Use
 Once the install and assembly instructions above have been completed the system is ready to be run. 
 Log into the Pi controlling the weather station and the Pi controlling the RGB LED strip. In the following
-code snippet in ~~~ wunderground_pi_firebase.py ~~~ update the host to be the ip address of the Pi controlling
+code snippet in ```python wunderground_pi_firebase.py``` update the host to be the ip address of the Pi controlling
 the weather station and make sure that the port is the same as the port in the simple_server.py file on the Pi
 controlling the weather station.
 
