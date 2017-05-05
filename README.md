@@ -94,39 +94,57 @@ In Firebase, change pi_command to 'off' and led_state to 'OFF'
  Schematic
  ~~~
 
-To understand these instructions you will have to understand the shcematic and pictures shown above. 
+To understand these instructions you will have to understand the shcematic and pictures shown above. It is best you use a breadboard first to connect everything then solder to a perfboard. Please read through these instructions first before attempting to build this. 
+
 Power Supply and Potentiometer:
- 1. The ideal voltage for a RGB LED strip is 10 volts/9volts. If you have one of these skip to instruction .....
- 2. With a voltage supply 11 volts and above continue reading.
+ 1. The ideal voltage for a RGB LED strip is 10 volts/9volts. If you have one of these skip to the P-Mosfets instructions.
+ 2. With a voltage supply 11 volts and above continue reading. Anything lower than 8 volts will reduce brightness of the LED       strip. 
  3. You will need a potentiometer that will need to be adjusted to 9.8 kΩ.
- 4. Connect the power and the ground to the potentiometer. 
- 5. Then connect the input wire that is connected to the pi. 
+ 4. If you use resistors instead, they will melt! 
+ 5. Connect the power and the ground to the potentiometer. 
+ 6. Then connect the input to the RGB power wire. 
 
 P-Mosfets: 
  1. Make sure that these are P-Mosfets, if they are N-Mosfets the PWM signals will be switched.
- 	ex: Green = 0 for a P-Mosfet then it would be Green = 255 for a N Mosfet.
+ 	ex: Green = 0 for a P-Mosfet then it would be Green = 255 for an N Mosfet.
  2. Check the datasheet for your specific Mosfet.
  3. Wiring:
- 	Gate is connected to one of the colors for the RGB wire. There should be three wires and three Mosfets.
-	Source is connected to power.
-	Drain is connected to ground.
+ 	Each gate is connected to one of the colored RGB wires.
+	Each source is connected to each GPIO pin (corresponding to a color) connected to the raspberry pi.
+	Each drain is connected to ground.
+ 4. If mosfets heat up something is wired wrong. 
 
 Raspberry Pi:
  1. Red wire = GPIO 20
  2. Blue wire = GPIO 21
  3. Green wire = GPIO 26
  4. Ground = GPIO 6
+ 
+Check coloring:
+ 1. Run sudo pigpiod
+ 2. Then type
+	pigs p 20 255 (Red ON)
+	pigs p 20 0   (Red OFF)
+	pigs p 21 255 (Blue ON)
+	pigs p 21 0   (Blue OFF)
+ 	pigs p 26 255 (Green ON)
+	pigs p 20 0   (Green OFF)
 
 Soldering:
- 1. You will need solder, soldering iron and a perf board.
- 2. Follow the schematic and solder it to the perf board
+ 1. You will need solder, a soldering iron and a perf board.
+ 2. Follow the schematic and solder it to a perf board
 
-Debugging
+Debugging:
  1. Check that you did not solder something wrong
  2. Check that the power is at the desired voltage
  3. Check that the potentiometer is at 9.8 kΩ
  4. Check everything is in the right GPIO pin
-
+ 5. Check coloring through the terminal
+ 
+Tips:
+ 1. If you have a larger perfboard and want to use a small part of it use pliers to snap it.
+ 2. Use wirestrippers or your teeth instead of scissors to strip wires. 
+ 3. Practice soldering before you try it on a perfboard. If wires are mixed with solder the the project will not work and you       may fry your raspberry pi.
 
  
  ## iPhone App
