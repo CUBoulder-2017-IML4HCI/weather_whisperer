@@ -93,7 +93,7 @@ In Firebase, change pi_command to 'off' and led_state to 'OFF'
  ~~~
  Schematic
  ~~~
- 
+ ![alt text][schematic]
  [schematic]: https://github.com/CUBoulder-2017-IML4HCI/weather_whisperer/blob/master/schematic.png "Schematic Picture"
 
 
