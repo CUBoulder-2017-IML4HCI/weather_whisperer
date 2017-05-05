@@ -40,7 +40,7 @@ import requests
 
 from collections import defaultdict
 
-
+api_key = ""
 
 #Firebase Configuration
 config = {
@@ -129,12 +129,12 @@ def setColor(r,g,b):
 
 # Set a color by giving RGB values of 0-255. with pigpio
 def setColor_Pig(r,g,b):
-	#pi.set_PWM_dutycycle(red, r)
+	pi.set_PWM_dutycycle(red, r)
 	pi.set_PWM_dutycycle(green, g)
 	pi.set_PWM_dutycycle(blue, b)
-	print("Red: ",r)
-	print("Green: ",g)
-	print("Blue: ",b)
+	#print("Red: ",r)
+	#print("Green: ",g)
+	#print("Blue: ",b)
 
 # Set hard limits between 0 and 255 for RGB balues
 def hard_limits(color):
@@ -147,7 +147,7 @@ def hard_limits(color):
 
 #Grab the current weather conditions from the weather underground API
 def current_conditions(city, state, weather_string):
-	r = requests.get('http://api.wunderground.com/api/8f5846f4c43e4050/conditions/q/'+state+'/'+city+'.json')
+	r = requests.get('http://api.wunderground.com/api/'+api_key+'/conditions/q/'+state+'/'+city+'.json')
 	values = r.json()
 	if city=="Boulder" and state=="CO":
 		print("contacting weather station")
@@ -180,12 +180,12 @@ def test_sample(temp,wind,weather,temps,winds,weathers):
 #Predict the RGB values based on the current weather conditions
 def predict(reg_model,city,state,weather_string,weather_float,features):
 	temp,wind,weather = current_conditions(city, state, weather_string)
-	weather = weather_float[weather]
+	weather = weather_string[weather]
 	print([temp,wind,weather])
 	temps = [f[0] for f in features]
 	winds = [f[1] for f in features]
 	weathers = [f[2] for f in features]
-	confident = test_sample(temp,wind,weather,temps,winds,weathers)
+	confident = test_sample(temp,wind,weather_float[weather],temps,winds,weathers)
 	print("Confidence: ", confident)
 
 	if confident:
@@ -197,9 +197,9 @@ def predict(reg_model,city,state,weather_string,weather_float,features):
 	red = int(np.round(closest[0][0]))
 	green = int(np.round(closest[0][1]))
 	blue = int(np.round(closest[0][2]))
-	print("red: ",red)
-	print("green: ",green)
-	print("blue: ",blue)
+	#print("red: ",red)
+	#print("green: ",green)
+	#print("blue: ",blue)
 	red = hard_limits(red)
 	green = hard_limits(green)
 	blue = hard_limits(blue)
@@ -220,13 +220,13 @@ def add_training_point(temp,wind,weather,r,g,b,total_training_points):
 #Used for training app
 def give_me_data(request,weather_string):
 	v = request.json()
-	print(v)
+	#print(v)
 	temp = round(float(v['history']['observations'][0]['tempi']))
 	wind = v['history']['observations'][0]['wspdi']
 	weather = weather_string[v['history']['observations'][0]['conds']]
-	print("temp_f: " + str(temp))
-	print("wind_mph: " + str(wind))
-	print("weather: " + str(weather))
+	#print("temp_f: " + str(temp))
+	#print("wind_mph: " + str(wind))
+	#print("weather: " + str(weather))
 	return temp,wind,weather
 	
 #Update the conditions if in the pre-training phase
@@ -235,29 +235,29 @@ def update_conditions(city,state,total_training_points,weather_string):
 	temp = ""
 	wind = ""
 	weather = ""
-	print(city)
-	print(state)
+	#print(city)
+	#print(state)
 	if(id_==0):
 		history = 'history_20160115'
-		r = requests.get('http://api.wunderground.com/api/8f5846f4c43e4050/'+history+'/q/'+state+'/'+city+'.json')
+		r = requests.get('http://api.wunderground.com/api/'+api_key+'/'+history+'/q/'+state+'/'+city+'.json')
 		
 		temp,wind,weather = give_me_data(r,weather_string)
 
 	elif(id_==1):
 		history = 'history_20160415'
-		r = requests.get('http://api.wunderground.com/api/8f5846f4c43e4050/'+history+'/q/'+state+'/'+city+'.json')
-		print(r)
+		r = requests.get('http://api.wunderground.com/api/'+api_key+'/'+history+'/q/'+state+'/'+city+'.json')
+		#print(r)
 		temp,wind,weather = give_me_data(r,weather_string)
 	elif(id_==2):
 		history = 'history_20160715'
-		r = requests.get('http://api.wunderground.com/api/8f5846f4c43e4050/'+history+'/q/'+state+'/'+city+'.json')
-		print(r)
+		r = requests.get('http://api.wunderground.com/api/'+api_key+'/'+history+'/q/'+state+'/'+city+'.json')
+		#print(r)
 		temp,wind,weather = give_me_data(r,weather_string)
 		
 	else:
 		history = 'history_20161015'
-		r = requests.get('http://api.wunderground.com/api/8f5846f4c43e4050/'+history+'/q/'+state+'/'+city+'.json')
-		print(r)
+		r = requests.get('http://api.wunderground.com/api/'+api_key+'/'+history+'/q/'+state+'/'+city+'.json')
+		#print(r)
 		temp,wind,weather = give_me_data(r,weather_string)
 		
 
@@ -265,7 +265,7 @@ def update_conditions(city,state,total_training_points,weather_string):
 
 def get_local_temp():
 	s = socket.socket()        
-	host = '192.168.20.101'# ip of raspberry pi 
+	host = '192.168.20.102'# ip of raspberry pi 
 	port = 5568              
 	s.connect((host, port))
 	temp = s.recv(1024)
@@ -284,9 +284,6 @@ def get_data(total_training_points,weather_float):
 		red = abs(float(db.child("training/ID"+str(i)+"/red").get().val())-255)
 		green = abs(float(db.child("training/ID"+str(i)+"/green").get().val())-255)
 		blue = abs(float(db.child("training/ID"+str(i)+"/blue").get().val())-255)
-		print("red data: ",red)
-		print("green data: ",green)
-		print("blue data: ",blue)
 		features.append([temp,wind,weather_float[weather]])
 		target.append([red,green,blue])
 
@@ -375,6 +372,7 @@ def get_local():
 
 if __name__ == "__main__":
 
+	api_key = sys.argv[1]
 	city = ""
 	state = ""
 	weather_string,weather_float = load_conditions()
