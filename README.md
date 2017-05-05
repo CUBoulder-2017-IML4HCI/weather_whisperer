@@ -93,9 +93,6 @@ In Firebase, change pi_command to 'off' and led_state to 'OFF'
  ~~~
  Schematic
  ~~~
- ![alt text][schematic]
- [schematic]: https://github.com/CUBoulder-2017-IML4HCI/weather_whisperer/blob/master/schematic.png "Schematic Picture"
-
 
 To understand these instructions you will have to understand the shcematic and pictures shown above. 
 Power Supply and Potentiometer:
@@ -106,8 +103,26 @@ Power Supply and Potentiometer:
  5. Then connect the input wire that is for the pi. 
 
 P-Mosfets: 
- 1. Make sure that these are P-Mosfets, if they are N-Mosfets the ..... will be switched
- 2. 
+ 1. Make sure that these are P-Mosfets, if they are N-Mosfets the will be switched
+ 2. ddd
+
+Soldering
+ 1. You will need solder, soldering iron and a perf board.
+ 2. Follow the schematic and solder it to the perf board
+ 
+Raspberry Pi
+ 1. Red wire = GPIO 20
+ 2. Blue wire = GPIO 21
+ 3. Green wire = GPIO 26
+ 4. Black wire = Power
+
+Debugging
+ 1. Check that you did not solder something wrong
+ 2. Check that the power is at the desired voltage
+ 3. Check that the potentiometer is at 9.8 kΩ
+ 4. Check everything is in the right GPIO pin
+
+
  
  ## iPhone App
  If you enter Boulder, CO the temperature will be taken from Pi Weather Station instead of Weather Underground
