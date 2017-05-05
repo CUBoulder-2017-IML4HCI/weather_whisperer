@@ -9,7 +9,7 @@ Next create a database in [firebase](https://firebase.google.com/) copying the b
 Make sure the names of the fields are the same.
 ![alt text][firebase]
 
-[logo]: https://github.com/CUBoulder-2017-IML4HCI/weather_whisperer/blob/master/firebase.png "Firebase Picture"
+[firebase]: https://github.com/CUBoulder-2017-IML4HCI/weather_whisperer/blob/master/firebase.png "Firebase Picture"
 
 ## Raspbery Pi
 This code is written for Python 3 and assumes that the Pis are connected to internet via wifi
