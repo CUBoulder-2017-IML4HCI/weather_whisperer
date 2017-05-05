@@ -91,7 +91,8 @@ In Firebase, change pi_command to 'off' and led_state to 'OFF'
  
  ## Hardware for RGB LED Strip
 
- ![Alt text](https://github.com/CUBoulder-2017-IML4HCI/weather_whisperer/blob/master/schematic.jpg)
+ ![Alt text][schema]
+ [schema]: (https://github.com/CUBoulder-2017-IML4HCI/weather_whisperer/blob/master/schematic.jpg)
 
 
 To understand these instructions you will have to understand the shcematic and pictures shown above. It is best you use a breadboard first to connect everything then solder to a perfboard. Please read through these instructions first before attempting to build this. 
