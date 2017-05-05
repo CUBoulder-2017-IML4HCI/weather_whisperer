@@ -113,6 +113,12 @@ P-Mosfets:
 	Each source is connected to each GPIO pin (corresponding to a color) connected to the raspberry pi.
 	Each drain is connected to ground.
  4. If mosfets heat up something is wired wrong. 
+ 
+LED strip:
+ 1. The power wire is connected to power.
+ 2. The red wire is connected to the gate of a mosfet.
+ 3. The blue wire is connected to the gate of a different mosfet.
+ 4. The green wire is connected to the gate of another different mosfet.
 
 Raspberry Pi:
  1. Red wire = GPIO 20
@@ -123,7 +129,7 @@ Raspberry Pi:
 Check coloring:
  1. Run sudo pigpiod
  2. Then type
- 3.pigs p 20 255 (Red ON)
+ 3. pigs p 20 255 (Red ON)
  4. pigs p 20 0   (Red OFF)
  5. pigs p 21 255 (Blue ON)
  6. pigs p 21 0   (Blue OFF)
@@ -132,19 +138,20 @@ Check coloring:
 
 Soldering:
  1. You will need solder, a soldering iron and a perf board.
- 2. Follow the schematic and solder it to a perf board
+ 2. Follow the schematic and solder it to a perf board.
 
 Debugging:
- 1. Check that you did not solder something wrong
- 2. Check that the power is at the desired voltage
- 3. Check that the potentiometer is at 9.8 kΩ
- 4. Check everything is in the right GPIO pin
- 5. Check coloring through the terminal
+ 1. Check that you did not solder something wrong.
+ 2. Check that the power is at the desired voltage.
+ 3. Check that the potentiometer is at 9.8 kΩ.
+ 4. Check everything is in the right GPIO pin.
+ 5. Check coloring through the terminal.
  
 Tips:
  1. If you have a larger perfboard and want to use a small part of it use pliers to snap it.
  2. Use wirestrippers or your teeth instead of scissors to strip wires. 
  3. Practice soldering before you try it on a perfboard. If wires are mixed with solder the the project will not work and you       may fry your raspberry pi.
+ 4. Have something that the led strip can wrap arounf for better lighting inside the lamp. 
 
  
  ## iPhone App
