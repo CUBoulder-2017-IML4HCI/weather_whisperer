@@ -59,7 +59,16 @@ def get_local_temp():
 	s.close()
 	return temp.decode('utf-16')
  ```
- 
+In the following code snippet in *wunderground_pi_firebase.py* update the Firebase API configuration to that of your Firebase
+```python
+#Firebase Configuration
+config = {
+  "apiKey": "apiKey",
+  "authDomain": "weatherwhisperer.firebaseapp.com",
+  "databaseURL": "https://weatherwhisperer.firebaseio.com",
+  "storageBucket": "weatherwhisperer.appspot.com"
+}
+```
 In Firebase, change pi_command to 'off' and led_state to 'OFF'
  ## Pi Controlling Weather Station
  Run the following command 
