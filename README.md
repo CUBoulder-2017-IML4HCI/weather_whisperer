@@ -7,8 +7,8 @@ The user determines what color the lamp should be based on different temperature
 First obtain a weather underground API key [here.](https://www.wunderground.com/weather/api/)
 Next create a database in [firebase](https://firebase.google.com/) copying the below format. 
 Make sure the names of the fields are the same.
-![alt text][firebase]
 
+![alt text][firebase]
 [firebase]: https://github.com/CUBoulder-2017-IML4HCI/weather_whisperer/blob/master/firebase.png "Firebase Picture"
 
 ## Raspbery Pi
