@@ -82,7 +82,7 @@ Power Supply and Potentiometer:
  5. Then connect the input wire that is for the pi. 
 
 P-Mosfets: 
- 1. Make sure that these are P-Mosfets, if they are N-Mosfets the 
+ 1. Make sure that these are P-Mosfets, if they are N-Mosfets the ..... will be switched
  2. 
  
  ## iPhone App
