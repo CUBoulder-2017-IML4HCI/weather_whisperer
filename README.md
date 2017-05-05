@@ -92,8 +92,10 @@ In Firebase, change pi_command to 'off' and led_state to 'OFF'
  ## Hardware for RGB LED Strip
  ~~~
  Schematic
- [schematic]: https://github.com/CUBoulder-2017-IML4HCI/weather_whisperer/master/schematic.png
  ~~~
+ 
+ [schematic]: https://github.com/CUBoulder-2017-IML4HCI/weather_whisperer/blob/master/schematic.png "Schematic Picture"
+
 
 To understand these instructions you will have to understand the shcematic and pictures shown above. 
 Power Supply and Potentiometer:
