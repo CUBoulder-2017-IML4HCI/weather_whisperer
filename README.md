@@ -151,7 +151,7 @@ Tips:
  1. If you have a larger perfboard and want to use a small part of it use pliers to snap it.
  2. Use wirestrippers or your teeth instead of scissors to strip wires. 
  3. Practice soldering before you try it on a perfboard. If wires are mixed with solder the the project will not work and you       may fry your raspberry pi.
- 4. Have something that the led strip can wrap arounf for better lighting inside the lamp. 
+ 4. Have something that the led strip can wrap around for better lighting inside the lamp. 
 
  
  ## iPhone App
