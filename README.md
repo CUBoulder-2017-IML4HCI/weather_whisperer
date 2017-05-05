@@ -38,6 +38,11 @@ sudo make install
 ~~~~
 
 ## iPhone
+The current edition of this app is for IOS and is built using Xcode. Xcode can be downloaded for free on all Apple computers. Xcode is not available for non-apple devices. 
+First, if you do not already have xcode downloaded on your computer, go to the app store and download the program or go to this link https://itunes.apple.com/us/app/xcode/id497799835?mt=12
+After you have downloaded Xcode, download the application named 'ww_app' by cloning or downloading this repository. After this is finished, go into the ww_app folder and open the file called 'ww_app.xcworkspace'. At this point you are ready to run the app! In the top left corner of Xcode, you will see a play button and stop button. Next to this you can see what simulator is currently being used and have the option to switch to a new simulator. Hit the play arrow button when you are ready to run the app.
+If you would like to make changes to the app, all files can be found in the project navigator column on the left side of Xcode. Layout changes can be made using 'Main.storyboard' and changes to the code can be made by editing any of the '.swift' files.
+
 
 ## Board Setup
 
@@ -104,8 +109,8 @@ P-Mosfets:
  If you enter Boulder, CO the temperature will be taken from Pi Weather Station instead of Weather Underground
  1. Enter the name of a city in the United States making sure to capitalize the first letter of each word in the city name 
  2. Enter the two letter state abbreviation
- 3. Press the save button
- 4. Press to the color button select the color to display for the given weather data
+ 3. Press the save button, weather information for that city will now appear on the main page of the app
+ 4. Press the color button select the color to display for the given weather data
  5. Press the save button
  6. Repeat steps 4 and 5 until the 'Add Color' text changes to 'Ready to Train'
  7. Press the 'ON/OFF' button
