@@ -98,23 +98,28 @@ To understand these instructions you will have to understand the shcematic and p
 Power Supply and Potentiometer:
  1. The ideal voltage for a RGB LED strip is 10 volts/9volts. If you have one of these skip to instruction .....
  2. With a voltage supply 11 volts and above continue reading.
- 3. You will need a potentiometer that will need to be adjusted to 9.8 kΩ
- 4. Connect the power and the ground to the potentiometer 
- 5. Then connect the input wire that is for the pi. 
+ 3. You will need a potentiometer that will need to be adjusted to 9.8 kΩ.
+ 4. Connect the power and the ground to the potentiometer. 
+ 5. Then connect the input wire that is connected to the pi. 
 
 P-Mosfets: 
- 1. Make sure that these are P-Mosfets, if they are N-Mosfets the will be switched
- 2. ddd
+ 1. Make sure that these are P-Mosfets, if they are N-Mosfets the PWM signals will be switched.
+ 	ex: Green = 0 for a P-Mosfet then it would be Green = 255 for a N Mosfet.
+ 2. Check the datasheet for your specific Mosfet.
+ 3. Wiring:
+ 	Gate is connected to one of the colors for the RGB wire. There should be three wires and three Mosfets.
+	Source is connected to power.
+	Drain is connected to ground.
 
-Soldering
- 1. You will need solder, soldering iron and a perf board.
- 2. Follow the schematic and solder it to the perf board
- 
-Raspberry Pi
+Raspberry Pi:
  1. Red wire = GPIO 20
  2. Blue wire = GPIO 21
  3. Green wire = GPIO 26
- 4. Black wire = Power
+ 4. Ground = GPIO 6
+
+Soldering:
+ 1. You will need solder, soldering iron and a perf board.
+ 2. Follow the schematic and solder it to the perf board
 
 Debugging
  1. Check that you did not solder something wrong
