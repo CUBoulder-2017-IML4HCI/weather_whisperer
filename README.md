@@ -123,12 +123,12 @@ Raspberry Pi:
 Check coloring:
  1. Run sudo pigpiod
  2. Then type
-pigs p 20 255 (Red ON)
-pigs p 20 0   (Red OFF)
-pigs p 21 255 (Blue ON)
-pigs p 21 0   (Blue OFF)
-pigs p 26 255 (Green ON)
-pigs p 20 0   (Green OFF)
+	1.pigs p 20 255 (Red ON)
+	2.pigs p 20 0   (Red OFF)
+	3.pigs p 21 255 (Blue ON)
+	4.pigs p 21 0   (Blue OFF)
+	5.pigs p 26 255 (Green ON)
+	6.pigs p 20 0   (Green OFF)
 
 Soldering:
  1. You will need solder, a soldering iron and a perf board.
